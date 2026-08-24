@@ -1,57 +1,77 @@
 # Konverter
 
-Konverter は、メディアファイルの変換を目的とした Electron ベースのデスクトップアプリケーションです。
+[![CI](https://github.com/nisesimadao/Konverter/actions/workflows/ci.yml/badge.svg)](https://github.com/nisesimadao/Konverter/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/nisesimadao/Konverter)](https://github.com/nisesimadao/Konverter/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## 特長
+**Finder の「このアプリケーションで開く」から、その場でメディアを別形式へ変換する macOS 向けデスクトップコンバーター。** 通常起動では変換画面として、ファイルから開いた場合は小さなクイック変換ウィンドウとして動作します。
 
-* さまざまなメディアファイル形式の変換に対応しています。
-* 直感的で使いやすいユーザーインターフェースを備えています。
+## できること
 
-## インストール
+- 動画・音声・画像を FFmpeg で相互変換
+- PNG / JPEG / BMP / TIFF / GIF などの画像変換は Jimp でも処理
+- Finder の **このアプリケーションで開く** から対象ファイルを直接渡せる
+- 同名ファイルがある場合は上書きせず、自動で連番を付ける
+- Electron の `contextIsolation` を有効にした最小構成
 
-Konverter をインストールするには、[リリースページ](https://github.com/opevista/Konverter/releases) から最新の `.dmg`（macOS 用）または `.zip`（macOS 用）をダウンロードしてください。
+## ダウンロード
 
-## ソースからのビルド
+ビルド済みアプリは [Releases](https://github.com/nisesimadao/Konverter/releases/latest) にあります。
 
-ソースコードから Konverter をビルドする手順は以下のとおりです。
+> 配布バイナリは未署名の場合があります。macOS の Gatekeeper に止められた場合は、システム設定の「プライバシーとセキュリティ」から許可してください。
 
-1. **リポジトリをクローンする**
+## 必要なもの
 
-   ```bash
-   git clone https://github.com/opevista/Konverter.git
-   cd Konverter
-   ```
+Konverter 0.2 以降のソースビルドは、FFmpeg をOS側から利用します。
 
-2. **electron ディレクトリへ移動する**
+```bash
+brew install ffmpeg
+```
 
-   ```bash
-   cd electron
-   ```
+Homebrew 以外の場所に FFmpeg がある場合は `KONVERTER_FFMPEG` で実行ファイルを指定できます。
 
-3. **依存関係をインストールする**
+```bash
+KONVERTER_FFMPEG=/path/to/ffmpeg npm start
+```
 
-   ```bash
-   npm install
-   ```
+macOS では `/opt/homebrew/bin/ffmpeg`、`/usr/local/bin/ffmpeg`、`/opt/local/bin/ffmpeg` も自動検出します。
 
-4. **アプリケーションをパッケージ化する**
+## ソースから実行
 
-   ```bash
-   npm run package
-   ```
+```bash
+git clone https://github.com/nisesimadao/Konverter.git
+cd Konverter
+npm ci
+npm start
+```
 
-   これにより、`Package` ディレクトリ内に `.dmg` および `.zip` ファイルが生成されます。
+## チェック
 
-## メディアファイルの推奨アプリケーション設定（macOS）
+```bash
+npm run check
+npm audit
+```
 
-Konverter は macOS において、各種メディアファイルの「別の推奨アプリケーション」として表示されるよう設定されています。これにより、メディアファイルを右クリックし、「このアプリケーションで開く」から Konverter を選択できます。
+## macOS パッケージ
 
-この設定に必要な `Info.plist` の変更は、`electron/package.json` に定義された `postpackage` スクリプトによって、`npm run package` 実行時に自動的に適用されます。
+```bash
+npm run package
+```
 
-## コントリビューション
+成果物は `release/` に生成されます。GitHub Actions でもソースチェックと macOS パッケージ生成を確認します。
 
-コントリビューションは歓迎しています。Issue の作成、またはプルリクエストの送信をご検討ください。
+## 構成
 
-## ライセンス
+```text
+main.js             Electron main / 変換処理
+renderer.js         preload bridge
+index.html          UI
+extend-info.plist   Finder の Open With 用ドキュメント関連付け
+icon.png            アプリアイコン
+```
 
-本プロジェクトは MIT ライセンスのもとで公開されています。
+過去の Python backend の PyInstaller 生成物と、重複していた `electron/` コピーは公開ソースから削除しています。
+
+## License
+
+[MIT](LICENSE)

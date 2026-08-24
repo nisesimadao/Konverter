@@ -1,43 +1,45 @@
 {
   "name": "konverter-electron",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "description": "A macOS-first desktop media converter that opens from Finder and converts with FFmpeg.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nisesimadao/Konverter.git"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "start:dev": "electron .",
-    "package": "electron-builder --mac"
+    "check": "node --check main.js && node --check renderer.js",
+    "package": "electron-builder --mac",
+    "package:dir": "electron-builder --mac --dir"
   },
   "devDependencies": {
-    "electron": "^26.2.0",
-    "electron-builder": "^26.0.12"
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
-    "jimp": "^1.6.0"
+    "jimp": "^1.6.1"
   },
   "build": {
-    "appId": "com.yourcompany.konverter",
+    "appId": "dev.nisesimadao.konverter",
     "productName": "Konverter",
     "directories": {
-      "output": "../Package"
+      "output": "release"
     },
     "files": [
-      "**/*",
-      "!**/.venv/*"
+      "main.js",
+      "renderer.js",
+      "index.html",
+      "icon.png",
+      "extend-info.plist",
+      "package.json"
     ],
     "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ],
+      "target": ["dmg", "zip"],
       "icon": "icon.png",
       "extendInfo": "extend-info.plist"
-    },
-    "extraFiles": [
-      {
-        "from": "bin/ffmpeg",
-        "to": "Resources/bin/ffmpeg",
-        "filter": ["**/*"]
-      }
-    ]
+    }
   }
 }

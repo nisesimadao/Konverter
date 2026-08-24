@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const fs = require('fs')
 const path = require('path')
 const { spawn } = require('child_process')
-const Jimp = require('jimp')
+const { Jimp } = require('jimp')
 
 // simple trace logger for debugging open-file flow
 ipcMain.handle('trace', async (ev, msg) => {
@@ -56,7 +56,7 @@ ipcMain.handle('convert-file', async (event, { inPath, target_ext }) => {
     if (jimp_exts.includes(input_ext_lower) && jimp_exts.includes(target_ext.toLowerCase())) {
       try {
         const image = await Jimp.read(in_path)
-        await image.writeAsync(out_path)
+        await image.write(out_path)
         return { ok: true, out: out_path }
       } catch (e) {
         // Fall through to ffmpeg if jimp fails
@@ -67,21 +67,19 @@ ipcMain.handle('convert-file', async (event, { inPath, target_ext }) => {
     return new Promise((resolve, reject) => {
       
       function getFfmpegPath() {
-        if (app.isPackaged) {
-          return path.join(process.resourcesPath, 'app.asar.unpacked', 'bin', 'ffmpeg');
-        }
-        return path.join(__dirname, 'bin', 'ffmpeg');
+        const binary = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'
+        const candidates = [
+          process.env.KONVERTER_FFMPEG,
+          app.isPackaged ? path.join(process.resourcesPath, 'bin', binary) : null,
+          process.platform === 'darwin' ? '/opt/homebrew/bin/ffmpeg' : null,
+          process.platform === 'darwin' ? '/usr/local/bin/ffmpeg' : null,
+          process.platform === 'darwin' ? '/opt/local/bin/ffmpeg' : null,
+        ].filter(Boolean)
+
+        return candidates.find(candidate => fs.existsSync(candidate)) || binary
       }
 
-      const ffmpegPath = getFfmpegPath();
-      
-      try {
-        // Ensure the binary is executable
-        fs.chmodSync(ffmpegPath, 0o755);
-      } catch (e) {
-        // ignore chmod errors
-      }
-
+      const ffmpegPath = getFfmpegPath()
       const ffmpeg = spawn(ffmpegPath, ['-y', '-i', in_path, out_path]);
       
       let stderr = ''
@@ -96,7 +94,7 @@ ipcMain.handle('convert-file', async (event, { inPath, target_ext }) => {
         }
       })
       ffmpeg.on('error', (err) => {
-        resolve({ ok: false, error: `ffmpeg spawn error: ${err.message}. This should not happen with a bundled ffmpeg.` })
+        resolve({ ok: false, error: `ffmpeg spawn error: ${err.message}. Install FFmpeg or set KONVERTER_FFMPEG to its executable path.` })
       })
     })
 
