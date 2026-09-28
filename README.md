@@ -4,31 +4,33 @@
 [![Release](https://img.shields.io/github/v/release/nisesimadao/Konverter)](https://github.com/nisesimadao/Konverter/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**Finder の「このアプリケーションで開く」から、その場でメディアを別形式へ変換する macOS 向けデスクトップコンバーター。** 通常起動では変換画面として、ファイルから開いた場合は小さなクイック変換ウィンドウとして動作します。
+Konverter は、Finder の「このアプリケーションで開く」からメディアファイルを別形式へ変換できる macOS 向けデスクトップアプリです。
+通常起動では変換画面を表示し、Finder からファイルを渡して起動した場合は小さなクイック変換ウィンドウを表示します。
 
-## できること
+## 主な機能
 
-- 動画・音声・画像を FFmpeg で相互変換
-- PNG / JPEG / BMP / TIFF / GIF などの画像変換は Jimp でも処理
-- Finder の **このアプリケーションで開く** から対象ファイルを直接渡せる
-- 同名ファイルがある場合は上書きせず、自動で連番を付ける
-- Electron の `contextIsolation` を有効にした最小構成
+- 動画、音声、画像を FFmpeg で変換します。
+- PNG / JPEG / BMP / TIFF / GIF などの画像は、Jimp でも変換できます。
+- Finder の「このアプリケーションで開く」から対象ファイルを直接渡せます。
+- 同名ファイルが存在する場合は上書きせず、連番を付けて保存します。
+- Electron の `contextIsolation` を有効にしています。
 
 ## ダウンロード
 
-ビルド済みアプリは [Releases](https://github.com/nisesimadao/Konverter/releases/latest) にあります。
+ビルド済みアプリは [Releases](https://github.com/nisesimadao/Konverter/releases/latest) から取得できます。
 
-> 配布バイナリは未署名の場合があります。macOS の Gatekeeper に止められた場合は、システム設定の「プライバシーとセキュリティ」から許可してください。
+> 配布バイナリは未署名の場合があります。
+> macOS の Gatekeeper によって起動を止められた場合は、システム設定の「プライバシーとセキュリティ」から実行を許可してください。
 
 ## 必要なもの
 
-Konverter 0.2 以降のソースビルドは、FFmpeg をOS側から利用します。
+Konverter 0.2 以降をソースから実行する場合は、OS 側に FFmpeg が必要です。
 
 ```bash
 brew install ffmpeg
 ```
 
-Homebrew 以外の場所に FFmpeg がある場合は `KONVERTER_FFMPEG` で実行ファイルを指定できます。
+Homebrew 以外の場所に FFmpeg がある場合は、`KONVERTER_FFMPEG` で実行ファイルを指定できます。
 
 ```bash
 KONVERTER_FFMPEG=/path/to/ffmpeg npm start
@@ -58,7 +60,8 @@ npm audit
 npm run package
 ```
 
-成果物は `release/` に生成されます。GitHub Actions でもソースチェックと macOS パッケージ生成を確認します。
+成果物は `release/` に生成されます。
+GitHub Actions では、ソースチェックと macOS パッケージの生成を確認します。
 
 ## 構成
 
@@ -70,7 +73,7 @@ extend-info.plist   Finder の Open With 用ドキュメント関連付け
 icon.png            アプリアイコン
 ```
 
-過去の Python backend の PyInstaller 生成物と、重複していた `electron/` コピーは公開ソースから削除しています。
+過去に使っていた Python バックエンドの PyInstaller 生成物と、重複していた `electron/` のコピーは公開ソースから削除しています。
 
 ## License
 
